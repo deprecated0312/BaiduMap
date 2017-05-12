@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.pxq0312.baidumap.MainActivity">
+
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true" />
+
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        android:padding="0dp"
+        android:id="@+id/btnSatellite"
+        android:src="@drawable/satellite_false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+         />
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        android:padding="0dp"
+        android:src="@drawable/traffic_false"
+        android:id="@+id/btnTraffic"
+        android:layout_below="@+id/btnSatellite"
+        android:layout_alignLeft="@+id/btnSatellite"
+        android:layout_alignStart="@+id/btnSatellite"
+        android:layout_marginTop="5dp"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:padding="10dp"
+        android:src="@drawable/location1"
+        android:id="@+id/btnLocationMode"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="40dp" />
+
+     <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        android:padding="0dp"
+        android:id="@+id/btnPano"
+        android:src="@drawable/pano_false"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/btnTraffic"
+        android:layout_alignLeft="@+id/btnTraffic"
+        android:layout_alignStart="@+id/btnTraffic" />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:padding="0dp"
+        android:id="@+id/btnRoutePlan"
+        android:src="@drawable/route"
+        android:layout_alignTop="@+id/btnSatellite"
+        android:layout_alignLeft="@+id/btnLocationMode"
+        android:layout_alignStart="@+id/btnLocationMode"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp" />
+
+
+
+</RelativeLayout>
