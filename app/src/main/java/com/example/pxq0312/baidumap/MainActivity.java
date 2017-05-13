@@ -43,29 +43,27 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
 
-    // 定位相关
     private LocationClient mLocClient;
     private MyLocationListener myListener = new MyLocationListener();
-    private MyLocationConfiguration.LocationMode mCurrentMode;
-    private SensorManager mSensorManager;
-    private Double lastX = 0.0;
-    private int mCurrentDirection = 0;
-    private double mCurrentLat = 0.0;
-    private double mCurrentLon = 0.0;
-    private float mCurrentAccracy;
-    private String mCurrentCity="成都市";
+    private MyLocationConfiguration.LocationMode mCurrentMode; //定位模式
+    private SensorManager mSensorManager; //方向传感器
+    private Double lastX = 0.0; //上一次的方向
+    private int mCurrentDirection = 0; //当前方向
+    private double mCurrentLat = 0.0; //当前纬度
+    private double mCurrentLon = 0.0; //当前经度
+    private float mCurrentAccracy; //当前定位精度
+    private String mCurrentCity="成都市"; //当前城市
 
     private MapView mMapView;
     private BaiduMap mBaiduMap;
 
-    // UI相关
     private ImageButton btnLocationMode;
     private ImageButton btnSatellite;
     private ImageButton btnTraffic;
     private ImageButton btnPano;
-    private boolean satellite=false;
-    private boolean traffic=false;
-    private boolean pano=false;
+    private boolean satellite=false; //卫星图
+    private boolean traffic=false; //路况信息
+    private boolean pano=false; //全景图
     private boolean isFirstLoc = true; // 是否首次定位
     private MyLocationData locData;
 
@@ -77,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
 
         SDKInitializer.initialize(getApplicationContext());
-        System.out.println("test");
         setContentView(R.layout.activity_main);
 
         btnLocationMode= (ImageButton) findViewById(R.id.btnLocationMode);
@@ -113,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 mCurrentMode, true, null));
 
 
+        //地图点击事件监听
         mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -153,11 +151,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-    //点击事件监听
+    //按钮点击事件监听
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btnLocationMode:
+            case R.id.btnLocationMode: //定位模式切换
                 switch (mCurrentMode) {
                     case NORMAL:
                         btnLocationMode.setImageResource(R.drawable.location2);
@@ -187,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         break;
                 }
                 break;
-            case R.id.btnSatellite:
+            case R.id.btnSatellite: //卫星图开关
                 if(satellite){
                     satellite=false;
                     mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
@@ -198,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     btnSatellite.setImageResource(R.drawable.satellite_true);
                 }
                 break;
-            case R.id.btnTraffic:
+            case R.id.btnTraffic: //路况信息开关
                 if(traffic){
                     traffic=false;
                     mBaiduMap.setTrafficEnabled(false);
@@ -209,14 +207,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     btnTraffic.setImageResource(R.drawable.traffic_true);
                 }
                 break;
-            case R.id.btnRoutePlan:
+            case R.id.btnRoutePlan: //打开路径规划页面
                 Intent intent=new Intent(MainActivity.this,RouteActivity.class);
                 intent.putExtra("lat",mCurrentLat);
                 intent.putExtra("lon",mCurrentLon);
                 intent.putExtra("city",mCurrentCity);
                 startActivity(intent);
                 break;
-            case R.id.btnPano:
+            case R.id.btnPano: //全景图开关
                 pano=!pano;
                 if(pano){
                     btnPano.setImageResource(R.drawable.pano_true);
@@ -245,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(str!=null){
                 mCurrentCity=location.getCity();
             }
-            //Log.i("MainActivity", "onReceiveLocation: "+mCurrentCity);
             locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360

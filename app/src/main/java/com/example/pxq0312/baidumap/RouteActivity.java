@@ -37,18 +37,18 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
     private AutoCompleteTextView etStart;
     private AutoCompleteTextView etEnd;
     private ArrayAdapter<String> sugAdapter;
-    private List<String> suggest;
+    private List<String> suggest; //搜索建议列表
     private SuggestionSearch mSuggestionSearch;
 
     private ListView listView;
-    private List<String> list;
+    private List<String> list; //历史记录列表
 
-    private boolean selectStart;
-    private boolean selectEnd;
-    private double startLon;
-    private double startLat;
-    private double endLon;
-    private double endLat;
+    private boolean selectStart; //起点输入框是否为焦点
+    private boolean selectEnd; //终点输入框是否为焦点
+    private double startLon; //起点经度
+    private double startLat; //起点纬度
+    private double endLon; //终点经度
+    private double endLat; //终点纬度
 
     private String mCurrentCity="成都市";
     private double mCurrentLat;
@@ -81,6 +81,7 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
 
             }
 
+            //当输入框内容改变时
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() <= 0) {
@@ -100,12 +101,23 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
         etStart.addTextChangedListener(textWatcher);
         etEnd.addTextChangedListener(textWatcher);
         View.OnFocusChangeListener listener=new View.OnFocusChangeListener() {
+            //当焦点变更时
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(v.getId()==R.id.etStart){
                     selectStart=hasFocus;
                 }else {
                     selectEnd=hasFocus;
+                }
+                if(selectStart) {
+                    findViewById(R.id.delete1).setVisibility(View.VISIBLE);
+                }else {
+                    findViewById(R.id.delete1).setVisibility(View.INVISIBLE);
+                }
+                if(selectEnd){
+                    findViewById(R.id.delete2).setVisibility(View.VISIBLE);
+                }else {
+                    findViewById(R.id.delete2).setVisibility(View.INVISIBLE);
                 }
             }
         };
@@ -117,9 +129,11 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
         findViewById(R.id.btnRoutePlan).setOnClickListener(this);
         findViewById(R.id.btnSelectLocation).setOnClickListener(this);
         findViewById(R.id.clear).setOnClickListener(this);
+        findViewById(R.id.delete1).setOnClickListener(this);
+        findViewById(R.id.delete2).setOnClickListener(this);
 
         list=new ArrayList<>();
-        try {
+        try { //读取历史记录
             FileInputStream fis=openFileInput("data");
             BufferedReader br=new BufferedReader(new InputStreamReader(fis));
             String line;
@@ -141,6 +155,7 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
         listView= (ListView) findViewById(R.id.listview);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //历史记录列表点击监听
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String str=((TextView)view).getText().toString();
@@ -152,6 +167,7 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
 
     }
 
+    //获取到建议搜索信息
     @Override
     public void onGetSuggestionResult(SuggestionResult res) {
         if (res == null || res.getAllSuggestions() == null) {
@@ -170,10 +186,11 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
         sugAdapter.notifyDataSetChanged();
     }
 
+    //按钮点击监听
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btnRoutePlan:
+            case R.id.btnRoutePlan: //开始路径规划
                 Intent intent=new Intent(RouteActivity.this,RoutePlanActivity.class);
                 intent.putExtra("lat",mCurrentLat);
                 intent.putExtra("lon",mCurrentLon);
@@ -187,12 +204,20 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                 int id=((RadioGroup)findViewById(R.id.radioGroup)).getCheckedRadioButtonId();
                 intent.putExtra("id",id);
                 startActivity(intent);
+                //存入历史记录
                 if(!(etStart.getText().toString().equals("地图上的点")||etEnd.getText().toString().equals("地图上的点"))){
+                    String temp=etStart.getText().toString()+"->"+etEnd.getText().toString();
+                    if(list.contains(temp)){
+                        list.remove(temp);
+                    }
+                    list.add(temp);
                     try {
-                        FileOutputStream fos=openFileOutput("data", Context.MODE_APPEND);
+                        FileOutputStream fos=openFileOutput("data", Context.MODE_PRIVATE);
                         BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(fos));
-                        bw.write(etStart.getText().toString()+"->"+etEnd.getText().toString());
-                        bw.newLine();
+                        for(String s:list){
+                            bw.write(s);
+                            bw.newLine();
+                        }
                         bw.close();
                         fos.close();
                     } catch (FileNotFoundException e) {
@@ -200,7 +225,6 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    list.add(etStart.getText().toString()+"->"+etEnd.getText().toString());
                     List<String> data=new ArrayList<>();;
                     for(int i=list.size()-1;i>=0;i--){
                         data.add(list.get(i));
@@ -209,7 +233,7 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                     listView.setAdapter(adapter);
                 }
                 break;
-            case R.id.btnSwap:
+            case R.id.btnSwap: //交换起点终点
                 String temp=etEnd.getText().toString();
                 etEnd.setText(etStart.getText().toString());
                 etStart.setText(temp);
@@ -220,7 +244,7 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                 startLon=endLon;
                 endLon=t;
                 break;
-            case R.id.btnSelectLocation:
+            case R.id.btnSelectLocation: //地图选点
                 Intent i=new Intent(RouteActivity.this,SelectLocationActivity.class);
                 i.putExtra("lon",mCurrentLon);
                 i.putExtra("lat",mCurrentLat);
@@ -230,7 +254,7 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                     startActivityForResult(i,2);
                 }
                 break;
-            case R.id.clear:
+            case R.id.clear: //清空历史记录
                 try {
                     FileOutputStream fos=openFileOutput("data", Context.MODE_PRIVATE);
                     fos.close();
@@ -241,9 +265,16 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                     e.printStackTrace();
                 }
                 break;
+            case R.id.delete1: //清空输入框
+                etStart.setText("");
+                break;
+            case R.id.delete2:
+                etEnd.setText("");
+                break;
         }
     }
 
+    //获取到地图选点信息
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode==RESULT_OK){

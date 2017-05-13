@@ -85,7 +85,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     Button mBtnNext = null; // 下一个节点
     int nodeIndex = -1; // 节点索引,供浏览节点时使用
     RouteLine route = null;
-    MassTransitRouteLine massroute = null;
+   // MassTransitRouteLine massroute = null;
     OverlayManager routeOverlay = null;
    // boolean useDefaultIcon = false;
     private TextView popupText = null; // 泡泡view
@@ -101,14 +101,14 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     BikingRouteResult nowResultbike = null;
     TransitRouteResult nowResultransit = null;
     DrivingRouteResult nowResultdrive = null;
-    MassTransitRouteResult nowResultmass = null;
+  //  MassTransitRouteResult nowResultmass = null;
 
     int nowSearchType = -1; // 当前进行的检索，供判断浏览节点时结果使用。
 
     private boolean hasShownDialogue = false;
 
-    private String startNodeStr;
-    private String endNodeStr;
+    private String startNodeStr; //起点地址
+    private String endNodeStr; //终点地址
     private String mCurrentCity="成都市";
     private double mCurrentLat;
     private double mCurrentLon;
@@ -117,10 +117,8 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     private double endLon;
     private double endLat;
 
-
-
     private Button btnNavi;
-    private ProgressDialog progressDialog;
+    private ProgressDialog progressDialog; //载入对话框
 
     //定位相关
     private LocationClient mLocClient;
@@ -182,12 +180,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         int id=intent.getIntExtra("id",0);
         ((RadioButton)findViewById(id)).setChecked(true);
 
-
-//        MapStatus.Builder builder = new MapStatus.Builder();
-//        builder.target(new LatLng(mCurrentLat,mCurrentLon));
-//        mBaidumap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-
-
+        //开始导航按钮点击
         btnNavi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,9 +232,6 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         }else if(endNodeStr.equals("地图上的点")){
             enNode=PlanNode.withLocation(new LatLng(endLat,endLon));
         }
-
-
-
 
 
         // 实际使用中请对起点终点城市进行正确的设定
@@ -342,12 +332,11 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         progressDialog.dismiss();
 
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RoutePlanActivity.this, "未找到结果，建议使用地图选点功能指定起终点", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
             // result.getSuggestAddrInfo()
-            Toast.makeText(RoutePlanActivity.this, "输入的地址有歧义", Toast.LENGTH_SHORT).show();
             return;
         }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
@@ -406,12 +395,11 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         progressDialog.dismiss();
 
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RoutePlanActivity.this, "未找到结果，建议使用地图选点功能指定起终点", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
             // result.getSuggestAddrInfo()
-            Toast.makeText(RoutePlanActivity.this, "输入的地址有歧义", Toast.LENGTH_SHORT).show();
             return;
         }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
@@ -478,12 +466,11 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         progressDialog.dismiss();
 
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RoutePlanActivity.this, "未找到结果，建议使用地图选点功能指定起终点", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
             // result.getSuggestAddrInfo()
-            Toast.makeText(RoutePlanActivity.this, "输入的地址有歧义", Toast.LENGTH_SHORT).show();
             return;
         }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
@@ -552,12 +539,11 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         progressDialog.dismiss();
 
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RoutePlanActivity.this, "未找到结果，建议使用地图选点功能指定起终点", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
             // result.getSuggestAddrInfo()
-            Toast.makeText(RoutePlanActivity.this, "输入的地址有歧义", Toast.LENGTH_SHORT).show();
             return;
         }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {

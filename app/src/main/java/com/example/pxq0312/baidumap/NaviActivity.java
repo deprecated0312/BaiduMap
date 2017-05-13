@@ -34,16 +34,16 @@ public class NaviActivity extends Activity {
 
     private static final String APP_FOLDER_NAME = "BaiduNavi";
 
-    private Button mWgsNaviBtn = null;
-    private Button mGcjNaviBtn = null;
-    private Button mBdmcNaviBtn = null;
-    private Button mDb06ll = null;
+    //private Button mWgsNaviBtn = null;
+    //private Button mGcjNaviBtn = null;
+    //private Button mBdmcNaviBtn = null;
+    //private Button mDb06ll = null;
     private String mSDCardPath = null;
 
     public static final String ROUTE_PLAN_NODE = "routePlanNode";
-    public static final String SHOW_CUSTOM_ITEM = "showCustomItem";
-    public static final String RESET_END_NODE = "resetEndNode";
-    public static final String VOID_MODE = "voidMode";
+   // public static final String SHOW_CUSTOM_ITEM = "showCustomItem";
+   // public static final String RESET_END_NODE = "resetEndNode";
+   // public static final String VOID_MODE = "voidMode";
 
     private static final String[] authBaseArr = { Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION };
@@ -104,9 +104,7 @@ public class NaviActivity extends Activity {
 
     String authinfo = null;
 
-    /**
-     * 内部TTS播报状态回传handler
-     */
+    //内部TTS播报状态回传handler
     private Handler ttsHandler = new Handler() {
         public void handleMessage(Message msg) {
             int type = msg.what;
@@ -125,9 +123,7 @@ public class NaviActivity extends Activity {
         }
     };
 
-    /**
-     * 内部TTS播报状态回调接口
-     */
+    //内部TTS播报状态回调接口
     private BaiduNaviManager.TTSPlayStateListener ttsPlayStateListener = new BaiduNaviManager.TTSPlayStateListener() {
 
         @Override
@@ -141,15 +137,15 @@ public class NaviActivity extends Activity {
         }
     };
 
-    public void showToastMsg(final String msg) {
-        NaviActivity.this.runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                Toast.makeText(NaviActivity.this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    public void showToastMsg(final String msg) {
+//        NaviActivity.this.runOnUiThread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                Toast.makeText(NaviActivity.this, msg, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     private boolean hasBasePhoneAuth() {
         PackageManager pm = this.getPackageManager();
@@ -173,7 +169,7 @@ public class NaviActivity extends Activity {
 
     private void initNavi() {
 
-        BNOuterTTSPlayerCallback ttsCallback = null;
+        //BNOuterTTSPlayerCallback ttsCallback = null;
 
         // 申请权限
         if (android.os.Build.VERSION.SDK_INT >= 23) {
@@ -256,28 +252,13 @@ public class NaviActivity extends Activity {
         BNRoutePlanNode sNode = null;
         BNRoutePlanNode eNode = null;
         switch (coType) {
-//            case GCJ02: {
-//                sNode = new BNRoutePlanNode(116.30142, 40.05087, "百度大厦", null, coType);
-//                eNode = new BNRoutePlanNode(116.39750, 39.90882, "北京天安门", null, coType);
-//                break;
-//            }
-//            case WGS84: {
-//                sNode = new BNRoutePlanNode(116.300821, 40.050969, "百度大厦", null, coType);
-//                eNode = new BNRoutePlanNode(116.397491, 39.908749, "北京天安门", null, coType);
-//                break;
-//            }
-//            case BD09_MC: {
-//                sNode = new BNRoutePlanNode(12947471, 4846474, "百度大厦", null, coType);
-//                eNode = new BNRoutePlanNode(12958160, 4825947, "北京天安门", null, coType);
-//                break;
-//            }
+
             case BD09LL: {
                 sNode=new BNRoutePlanNode(startLon,startLat,null,null,coType);
                 eNode=new BNRoutePlanNode(endLon,endLat,null,null,coType);
                 break;
             }
-            default:
-                ;
+
         }
         if (sNode != null && eNode != null) {
             List<BNRoutePlanNode> list = new ArrayList<BNRoutePlanNode>();
@@ -297,9 +278,9 @@ public class NaviActivity extends Activity {
 
         @Override
         public void onJumpToNavigator() {
-            /*
-             * 设置途径点以及resetEndNode会回调该接口
-             */
+
+             //设置途径点以及resetEndNode会回调该接口
+
 
             for (Activity ac : activityList) {
 
