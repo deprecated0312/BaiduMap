@@ -41,9 +41,9 @@ public class NaviActivity extends Activity {
     private String mSDCardPath = null;
 
     public static final String ROUTE_PLAN_NODE = "routePlanNode";
-   // public static final String SHOW_CUSTOM_ITEM = "showCustomItem";
-   // public static final String RESET_END_NODE = "resetEndNode";
-   // public static final String VOID_MODE = "voidMode";
+    public static final String SHOW_CUSTOM_ITEM = "showCustomItem";
+    public static final String RESET_END_NODE = "resetEndNode";
+    public static final String VOID_MODE = "voidMode";
 
     private static final String[] authBaseArr = { Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION };
@@ -169,7 +169,7 @@ public class NaviActivity extends Activity {
 
     private void initNavi() {
 
-        //BNOuterTTSPlayerCallback ttsCallback = null;
+        BNOuterTTSPlayerCallback ttsCallback = null;
 
         // 申请权限
         if (android.os.Build.VERSION.SDK_INT >= 23) {
@@ -309,7 +309,7 @@ public class NaviActivity extends Activity {
         // BNaviSettingManager.setDayNightMode(BNaviSettingManager.DayNightMode.DAY_NIGHT_MODE_DAY);
         BNaviSettingManager
                 .setShowTotalRoadConditionBar(BNaviSettingManager.PreViewRoadCondition.ROAD_CONDITION_BAR_SHOW_ON);
-        BNaviSettingManager.setVoiceMode(BNaviSettingManager.VoiceMode.Veteran);
+        //BNaviSettingManager.setVoiceMode(BNaviSettingManager.VoiceMode.Veteran);
         // BNaviSettingManager.setPowerSaveMode(BNaviSettingManager.PowerSaveMode.DISABLE_MODE);
         BNaviSettingManager.setRealRoadCondition(BNaviSettingManager.RealRoadCondition.NAVI_ITS_ON);
         Bundle bundle = new Bundle();

@@ -1,6 +1,7 @@
 package com.example.pxq0312.baidumap;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,11 +13,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private double mCurrentLon = 0.0; //当前经度
     private float mCurrentAccracy; //当前定位精度
     private String mCurrentCity="成都市"; //当前城市
+    private String mCurrentAddress="正在获取地址..."; //当前地址
 
     private MapView mMapView;
     private BaiduMap mBaiduMap;
@@ -61,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageButton btnSatellite;
     private ImageButton btnTraffic;
     private ImageButton btnPano;
+    private TextView tvAddress;
+    private ProgressDialog progressDialog; //载入对话框
     private boolean satellite=false; //卫星图
     private boolean traffic=false; //路况信息
     private boolean pano=false; //全景图
@@ -77,10 +83,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setTitle("载入中……");
+        progressDialog.setMessage("正在加载地图……");
+        progressDialog.show();
+
         btnLocationMode= (ImageButton) findViewById(R.id.btnLocationMode);
         btnSatellite= (ImageButton) findViewById(R.id.btnSatellite);
         btnTraffic= (ImageButton) findViewById(R.id.btnTraffic);
         btnPano= (ImageButton) findViewById(R.id.btnPano);
+        tvAddress= (TextView) findViewById(R.id.tvAddress);
         mSensorManager= (SensorManager) getSystemService(SENSOR_SERVICE); //获取传感器管理服务
         mCurrentMode= MyLocationConfiguration.LocationMode.NORMAL;
 
@@ -92,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // 地图初始化
         mMapView = (MapView) findViewById(R.id.bmapView);
+        mMapView.showZoomControls(false);
         mBaiduMap = mMapView.getMap();
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
@@ -128,6 +141,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return false;
             }
         });
+
+        //拖动屏幕事件监听
+        mBaiduMap.setOnMapTouchListener(new BaiduMap.OnMapTouchListener() {
+            @Override
+            public void onTouch(MotionEvent motionEvent) {
+                if(motionEvent.getAction()==MotionEvent.ACTION_MOVE){
+                    btnLocationMode.setImageResource(R.drawable.location1);
+                    mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
+                    mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
+                            mCurrentMode, true, null));
+                    tvAddress.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        mBaiduMap.setOnMapLoadedCallback(new BaiduMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                progressDialog.dismiss();
+            }
+        });
+
     }
 
     //方向传感器
@@ -162,9 +197,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         mCurrentMode = MyLocationConfiguration.LocationMode.FOLLOWING;
                         mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
                                 mCurrentMode, true, null));
-                        MapStatus.Builder builder = new MapStatus.Builder();
-                        builder.overlook(0);
-                        mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+                        tvAddress.setVisibility(View.VISIBLE);
+                        tvAddress.setText(mCurrentAddress+"(精确到"+mCurrentAccracy+"米)");
                         break;
                     case COMPASS:
                         btnLocationMode.setImageResource(R.drawable.location1);
@@ -174,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         MapStatus.Builder builder1 = new MapStatus.Builder();
                         builder1.overlook(0).rotate(0);
                         mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder1.build()));
+                        tvAddress.setVisibility(View.INVISIBLE);
                         break;
                     case FOLLOWING:
                         btnLocationMode.setImageResource(R.drawable.location3);
@@ -190,10 +225,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     satellite=false;
                     mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
                     btnSatellite.setImageResource(R.drawable.satellite_false);
+                    Toast.makeText(this,"卫星图关闭",Toast.LENGTH_SHORT).show();
                 }else {
                     satellite=true;
                     mBaiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
                     btnSatellite.setImageResource(R.drawable.satellite_true);
+                    Toast.makeText(this,"卫星图开启",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btnTraffic: //路况信息开关
@@ -201,10 +238,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     traffic=false;
                     mBaiduMap.setTrafficEnabled(false);
                     btnTraffic.setImageResource(R.drawable.traffic_false);
+                    Toast.makeText(this,"路况信息关闭",Toast.LENGTH_SHORT).show();
                 }else {
                     traffic=true;
                     mBaiduMap.setTrafficEnabled(true);
                     btnTraffic.setImageResource(R.drawable.traffic_true);
+                    Toast.makeText(this,"路况信息开启",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btnRoutePlan: //打开路径规划页面
@@ -218,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 pano=!pano;
                 if(pano){
                     btnPano.setImageResource(R.drawable.pano_true);
+                    Toast.makeText(this,"请在地图上选择全景图展示地点",Toast.LENGTH_SHORT).show();
                 }else {
                     btnPano.setImageResource(R.drawable.pano_false);
                 }
@@ -241,8 +281,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mCurrentAccracy = location.getRadius();
             String str=location.getCity();
             if(str!=null){
-                mCurrentCity=location.getCity();
+                mCurrentCity=str;
             }
+            str=location.getAddrStr();
+            if(str!=null){
+                mCurrentAddress=str;
+            }
+            tvAddress.setText(mCurrentAddress+"(精确到"+mCurrentAccracy+"米)");
             locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
                     // 此处设置开发者获取到的方向信息，顺时针0-360

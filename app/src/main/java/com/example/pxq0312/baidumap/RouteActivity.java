@@ -237,6 +237,8 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                 String temp=etEnd.getText().toString();
                 etEnd.setText(etStart.getText().toString());
                 etStart.setText(temp);
+                etEnd.dismissDropDown();
+                etStart.dismissDropDown();
                 double t=startLat;
                 startLat=endLat;
                 endLat=t;
@@ -259,6 +261,7 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                     FileOutputStream fos=openFileOutput("data", Context.MODE_PRIVATE);
                     fos.close();
                     listView.setAdapter(null);
+                    list.clear();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -282,10 +285,12 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                 startLat=data.getDoubleExtra("lat",0);
                 startLon=data.getDoubleExtra("lon",0);
                 etStart.setText("地图上的点");
+                etStart.dismissDropDown();
             }else if(requestCode==2){
                 endLat=data.getDoubleExtra("lat",0);
                 endLon=data.getDoubleExtra("lon",0);
                 etEnd.setText("地图上的点");
+                etEnd.dismissDropDown();
             }
         }
     }

@@ -63,6 +63,18 @@
         android:layout_alignLeft="@+id/btnTraffic"
         android:layout_alignStart="@+id/btnTraffic" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="5dp"
+        android:background="#FFFFFF"
+        android:id="@+id/tvAddress"
+        android:text="正在获取地址..."
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="invisible"
+        />
+
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -70,12 +82,10 @@
         android:padding="0dp"
         android:id="@+id/btnRoutePlan"
         android:src="@drawable/route"
-        android:layout_alignTop="@+id/btnSatellite"
-        android:layout_alignLeft="@+id/btnLocationMode"
-        android:layout_alignStart="@+id/btnLocationMode"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp" />
-
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="40dp"/>
 
 
 </RelativeLayout>

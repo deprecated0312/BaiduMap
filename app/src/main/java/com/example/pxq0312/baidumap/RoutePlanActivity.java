@@ -208,7 +208,6 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         btnNavi.setVisibility(View.GONE);
         progressDialog.setTitle("载入中……");
         progressDialog.setMessage("线路规划中……");
-        progressDialog.setCancelable(false);
         progressDialog.show();
 
         // 重置浏览节点的路线数据
@@ -521,6 +520,12 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                 overlay.zoomToSpan();
                 mBtnPre.setVisibility(View.VISIBLE);
                 mBtnNext.setVisibility(View.VISIBLE);
+
+                startLon=route.getStarting().getLocation().longitude;
+                startLat=route.getStarting().getLocation().latitude;
+                endLon=route.getTerminal().getLocation().longitude;
+                endLat=route.getTerminal().getLocation().latitude;
+                btnNavi.setVisibility(View.VISIBLE);
             } else {
                 Log.d("route result", "结果数<0");
                 return;
