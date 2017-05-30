@@ -212,7 +212,7 @@ public class NaviActivity extends Activity {
             }
 
             public void initFailed() {
-                Toast.makeText(NaviActivity.this, "百度导航引擎初始化失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NaviActivity.this, "百度导航引擎初始化失败！", Toast.LENGTH_SHORT).show();
                 finish();
             }
 
@@ -232,7 +232,7 @@ public class NaviActivity extends Activity {
     private void routeplanToNavi(CoordinateType coType) {
         mCoordinateType = coType;
         if (!hasInitSuccess) {
-            Toast.makeText(NaviActivity.this, "还未初始化!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NaviActivity.this, "还未初始化！", Toast.LENGTH_SHORT).show();
         }
         // 权限申请
         if (android.os.Build.VERSION.SDK_INT >= 23) {
@@ -243,7 +243,7 @@ public class NaviActivity extends Activity {
                     this.requestPermissions(authComArr, authComRequestCode);
                     return;
                 } else {
-                    Toast.makeText(NaviActivity.this, "没有完备的权限!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NaviActivity.this, "没有完备的权限！", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -300,7 +300,7 @@ public class NaviActivity extends Activity {
 
         @Override
         public void onRoutePlanFailed() {
-            Toast.makeText(NaviActivity.this, "算路失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NaviActivity.this, "算路失败！", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -377,7 +377,7 @@ public class NaviActivity extends Activity {
                 if (ret == 0) {
                     continue;
                 } else {
-                    Toast.makeText(NaviActivity.this, "缺少导航基本的权限!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NaviActivity.this, "缺少导航基本的权限！", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }

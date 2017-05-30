@@ -257,9 +257,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 pano=!pano;
                 if(pano){
                     btnPano.setImageResource(R.drawable.pano_true);
-                    Toast.makeText(this,"请在地图上选择全景图展示地点",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"请在地图上选择全景展示地点",Toast.LENGTH_SHORT).show();
                 }else {
                     btnPano.setImageResource(R.drawable.pano_false);
+                    Toast.makeText(this,"全景展示功能关闭",Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

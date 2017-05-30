@@ -191,6 +191,14 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnRoutePlan: //开始路径规划
+                if(etStart.getText().toString().equals("")){
+                    Toast.makeText(this,"起点不能为空！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(etEnd.getText().toString().equals("")){
+                    Toast.makeText(this,"终点不能为空！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent=new Intent(RouteActivity.this,RoutePlanActivity.class);
                 intent.putExtra("lat",mCurrentLat);
                 intent.putExtra("lon",mCurrentLon);

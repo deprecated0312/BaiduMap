@@ -26,7 +26,7 @@ public class PanoDemoApplication extends Application {
         }
 
         if (!mBMapManager.init(new MyGeneralListener())) {
-            Toast.makeText(PanoDemoApplication.getInstance().getApplicationContext(), "BMapManager  初始化错误!",
+            Toast.makeText(PanoDemoApplication.getInstance().getApplicationContext(), "BMapManager  初始化错误！",
                     Toast.LENGTH_LONG).show();
         }
         Log.d("ljx", "initEngineManager");
