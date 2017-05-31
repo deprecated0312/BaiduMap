@@ -16,10 +16,24 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
+import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
+import com.baidu.mapapi.search.poi.PoiAddrInfo;
+import com.baidu.mapapi.search.poi.PoiBoundSearchOption;
+import com.baidu.mapapi.search.poi.PoiDetailResult;
+import com.baidu.mapapi.search.poi.PoiIndoorResult;
+import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
+import com.baidu.mapapi.search.poi.PoiResult;
+import com.baidu.mapapi.search.poi.PoiSearch;
+import com.baidu.mapapi.search.poi.PoiSortType;
 import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
+import com.baidu.mapapi.utils.DistanceUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,12 +47,15 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RouteActivity extends AppCompatActivity implements OnGetSuggestionResultListener, View.OnClickListener {
+public class RouteActivity extends AppCompatActivity implements OnGetSuggestionResultListener, View.OnClickListener, OnGetPoiSearchResultListener {
     private AutoCompleteTextView etStart;
     private AutoCompleteTextView etEnd;
     private ArrayAdapter<String> sugAdapter;
     private List<String> suggest; //搜索建议列表
     private SuggestionSearch mSuggestionSearch;
+
+    private PoiSearch mPoiSearch;
+    private LatLng center = new LatLng( 30.756035,103.937404 );
 
     private ListView listView;
     private List<String> list; //历史记录列表
@@ -67,6 +84,9 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
         mCurrentLat=intent.getDoubleExtra("lat",0);
         mCurrentLon=intent.getDoubleExtra("lon",0);
 
+        mPoiSearch=PoiSearch.newInstance();
+        mPoiSearch.setOnGetPoiSearchResultListener(this);
+
         // 初始化建议搜索模块，注册建议搜索事件监听
         mSuggestionSearch = SuggestionSearch.newInstance();
         mSuggestionSearch.setOnGetSuggestionResultListener(this);
@@ -88,9 +108,13 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                     return;
                 }
                 //使用建议搜索服务获取建议列表，结果在onSuggestionResult()中更新
-                mSuggestionSearch
-                        .requestSuggestion((new SuggestionSearchOption())
-                                .keyword(s.toString()).city(mCurrentCity));
+//                mSuggestionSearch
+//                        .requestSuggestion((new SuggestionSearchOption())
+//                                .keyword(s.toString()).city(mCurrentCity).location(center).citylimit(true));
+                mPoiSearch.searchNearby(new PoiNearbySearchOption().keyword(s.toString()).sortType(PoiSortType.distance_from_near_to_far).location(center)
+                        .radius(1000).pageNum(0).pageCapacity(50));
+
+
             }
 
             @Override
@@ -170,20 +194,21 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
     //获取到建议搜索信息
     @Override
     public void onGetSuggestionResult(SuggestionResult res) {
-        if (res == null || res.getAllSuggestions() == null) {
-            return;
-        }
-        suggest = new ArrayList<String>();
-        for (SuggestionResult.SuggestionInfo info : res.getAllSuggestions()) {
-            if (info.key != null) {
-                suggest.add(info.key);
-
-            }
-        }
-        sugAdapter = new ArrayAdapter<String>(RouteActivity.this, android.R.layout.simple_dropdown_item_1line, suggest);
-        etEnd.setAdapter(sugAdapter);
-        etStart.setAdapter(sugAdapter);
-        sugAdapter.notifyDataSetChanged();
+//        if (res == null || res.getAllSuggestions() == null) {
+//            return;
+//        }
+//        suggest = new ArrayList<String>();
+//        for (SuggestionResult.SuggestionInfo info : res.getAllSuggestions()) {
+//            if (info.key != null) {
+//                if(info.pt!=null&& DistanceUtil.getDistance(info.pt,center)<1000) {
+//                    suggest.add(info.key);
+//                }
+//            }
+//        }
+//        sugAdapter = new ArrayAdapter<String>(RouteActivity.this, android.R.layout.simple_dropdown_item_1line, suggest);
+//        etEnd.setAdapter(sugAdapter);
+//        etStart.setAdapter(sugAdapter);
+//        sugAdapter.notifyDataSetChanged();
     }
 
     //按钮点击监听
@@ -301,5 +326,39 @@ public class RouteActivity extends AppCompatActivity implements OnGetSuggestionR
                 etEnd.dismissDropDown();
             }
         }
+    }
+
+    @Override
+    public void onGetPoiResult(PoiResult poiResult) {
+        if (poiResult == null || poiResult.error == SearchResult.ERRORNO.RESULT_NOT_FOUND) {
+            return;
+        }
+        if (poiResult.error == SearchResult.ERRORNO.NO_ERROR) {
+            suggest = new ArrayList<String>();
+            List<PoiInfo> addrInfoList=poiResult.getAllPoi();
+            if (addrInfoList==null){
+                return;
+            }
+            for (PoiInfo info:addrInfoList) {
+                if(info.type== PoiInfo.POITYPE.POINT&&info.location!=null&&DistanceUtil.getDistance(info.location,center)<1000) {
+                    suggest.add(info.name);
+                }
+            }
+
+            sugAdapter = new ArrayAdapter<String>(RouteActivity.this, android.R.layout.simple_dropdown_item_1line, suggest);
+            etEnd.setAdapter(sugAdapter);
+            etStart.setAdapter(sugAdapter);
+            sugAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
+
+    }
+
+    @Override
+    public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
+
     }
 }
